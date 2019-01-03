@@ -1,0 +1,44 @@
+#!/bin/bash
+
+folders="$(ls)"
+
+renameFiles() {
+    cd $1
+    counter=1
+    files="$(ls)"
+    targetFile=""
+    extension=""
+    for file in $files
+    do
+        extension="${file##*.}"
+        while [ -f $targetFile ]
+        do
+            if [ $counter -lt 10 ]; then
+                targetFile="$1_0$counter.$extension"
+            else
+                targetFile="$1_$counter.$extension"
+            fi
+            counter=$((counter + 1))
+            if [ $file == $targetFile ]; then
+                echo "File already exists in right format"
+                break
+            fi
+        done
+        if [ $file != $targetFile ]; then
+            echo "Rename File: $file -> $targetFile"
+            mv $file $targetFile
+        fi
+    done
+    mv $targetFile "$1.$extension"
+    cd ..
+}
+
+for i in 1 2
+do
+    for folder in $folders
+    do
+        if [ -d $folder ]; then
+            renameFiles $folder
+        fi
+    done
+done
